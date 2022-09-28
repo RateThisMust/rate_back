@@ -1,0 +1,8 @@
+/vendor
+composer.phar
+.env
+/config/app.php
+/config/connection.php
+/config/notifications.php
+/public/img/*
+!/public/img/.gitkeep

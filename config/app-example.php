@@ -2,10 +2,9 @@
 
 return [
     'displayErrorDetails' => true,
-    'secret' => 'secret',
-    'root_dir' => '/var/www/rate/back',
-    'domain' => '//rate.fvds.ru',
-    'dadata_api_key' => 'dadata_api_key',
+    'secret' => 'c4e250aed1813a0b4bbe5a01532649',
+    'root_dir' => 'D:\OSPanel\domains\wbtools\server',
+    'domain' => '/wbtools',
+    'dadata_api_key' => '57eb82c6a4b76b07c18a8822dcc60d126073a2c9',
     'jwt_salt' => '779560',
 ];
-

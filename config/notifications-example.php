@@ -2,6 +2,6 @@
 
 return [
     'managers' => [
-        'test@test.test'
+        '0travel000@gmail.com'
     ],
 ];

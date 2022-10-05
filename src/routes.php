@@ -2,11 +2,14 @@
 
 use App\Actions\Positions\GetPositionsListAction;
 use App\Actions\Main\OptionsAction;
+use App\Actions\Notification\NotificationAction;
 use App\Actions\Main\FastInfoAction;
 use App\Actions\Main\StaInfoAction;
 use App\Actions\Main\SmsAction;
 use App\Actions\Main\AuthAction;
 use App\Actions\Main\DaDataAction;
+
+
 
 
 use App\Actions\Find\ByArtAction;
@@ -30,18 +33,21 @@ use Slim\Psr7\Response;
 return function (App $app) {
     $app->group('/api', function ($group) {
         $group->group('/options', function ($group) {
-            $group->get('/', OptionsAction::class); 
+            $group->get('/', OptionsAction::class);
         });
 
 
         $group->group('/positions', function ($group) {
-            $group->get('/', GetPositionsListAction::class); 
+            $group->get('/', GetPositionsListAction::class);
+        });
+        $group->group('/get_notification', function ($group) {
+            $group->get('/', NotificationAction::class);
         });
         $group->group('/fastinfo', function ($group) {
-            $group->get('/', FastInfoAction::class); 
+            $group->get('/', FastInfoAction::class);
         });
         $group->group('/statnfo', function ($group) {
-            $group->post('/', StaInfoAction::class); 
+            $group->post('/', StaInfoAction::class);
         });
         $group->group('/buyout', function ($group) {
             $group->post('/', BuyOutAction::class);
@@ -58,7 +64,7 @@ return function (App $app) {
             $group->post('/{group}', ReviewsAction::class);
         });
 
-        
+
 
         $group->group('/find', function ($group) {
             $group->post('/bulk/', BulkAction::class);
@@ -71,7 +77,7 @@ return function (App $app) {
         $group->group('/order', function ($group) {
             $group->post('/save/', OrderSaveAction::class);
         });
-        
+
         $group->group('/sms', function ($group) {
             $group->post('/send/', SmsAction::class);
             $group->post('/check/', SmsAction::class);

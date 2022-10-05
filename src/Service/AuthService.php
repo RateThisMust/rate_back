@@ -32,15 +32,6 @@ class AuthService
         $output = [];
         $id = @$params['_user']['id'];
         $user = [];
-        $user['phone'] = 'phone';
-        $user['inn'] = 'inn';
-        $user['wb_api_key'] = 'wb_api_key';
-        $user['telegram'] = 'telegram';
-
-        $user['u_surname'] = 'u_surname';
-        $user['u_name'] = 'u_name';
-        $user['bank'] = 'bank';
-        $user['ks'] = 'ks';
 
         $inn = @$params['inn'];
         $suggestions = @$params['suggestions'];

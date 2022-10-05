@@ -30,7 +30,7 @@ class OrderService
     public function save( array $params = [] ): array
     {
         $dbh = $this->rateDB->connection;
-        
+
         $output = [];
 
         $error = 0;
@@ -49,7 +49,7 @@ class OrderService
         $type = @$params['type'];
 
         if ( $type == 'bid' ) {
-            $status = 'Заявка';
+            $status = '1';
         }
         if ( $type == 'draft' ) {
             $status = 'Черновик';
@@ -74,12 +74,14 @@ class OrderService
                 'type' => null,
                 'article' => $ar['art'],
                 'size' => $ar['size'],
+                'price' => $ar['price'],
                 'search_key' => $ar['query'],
                 'barcode' => $ar['barcode'],
                 'sex' => (@$ar['gender']) ? $ar['gender']: null,
                 'kto_zabirat' => $model,
                 'brand' => $ar['brand'],
-                'naming' => @$ar['name'],
+                'naming' => @$ar['naming'],
+                'date_add' => @$ar['date_add'],
                 'grafik_otziv' => $ar['date'],
                 'task1' => $task1,
 
@@ -106,7 +108,7 @@ class OrderService
                     --$ar['count'];
                 } while ($ar['count'] > 0);
             }
-            // 
+            //
 
         }
         $items = $_items;
@@ -142,9 +144,9 @@ class OrderService
         if ( $error > 0 ) {
             $output['error'] = true;
             if ( !@$output['msg'] ) {
-                $output['msg'] = 'Чтото пошло не так';    
+                $output['msg'] = 'Чтото пошло не так';
             }
-            
+
         }
 
 

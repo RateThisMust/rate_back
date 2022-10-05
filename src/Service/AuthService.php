@@ -31,6 +31,16 @@ class AuthService
         $dbh = $this->rateDB->connection;
         $output = [];
         $id = @$params['_user']['id'];
+        $user = [];
+        $user['phone'] = 'phone';
+        $user['inn'] = 'inn';
+        $user['wb_api_key'] = 'wb_api_key';
+        $user['telegram'] = 'telegram';
+
+        $user['u_surname'] = 'u_surname';
+        $user['u_name'] = 'u_name';
+        $user['bank'] = 'bank';
+        $user['ks'] = 'ks';
 
         $inn = @$params['inn'];
         $suggestions = @$params['suggestions'];
@@ -47,7 +57,7 @@ class AuthService
             ';
             $stmt = $dbh->prepare( $sql );
             if ( $stmt->execute( [ $inn, '#'.$number, json_encode($suggestions), $suggestions[0]['data']['name']['short_with_opf'] , $id ] ) ) {
-                
+
             }
         } else {
             $sql = '
@@ -57,21 +67,8 @@ class AuthService
             ';
             $stmt = $dbh->prepare( $sql );
 
-            if ( $stmt->execute( [ 
-                @$params['u_name'],
-                @$params['u_surname'],
-                @$params['bank'],
-                @$params['ks'],
-                @$params['wb_api_key'],
-                @$params['telegram'],
-                $id
-            ] ) ) {
-                // 
-            }
         }
 
-
-        $user = [];
 
         $sql = '
             SELECT * FROM client_data cd
@@ -103,7 +100,7 @@ class AuthService
 
             $output['data']['user'] = $user;
         }
-        
+
 
         return $output;
     }
@@ -149,17 +146,17 @@ class AuthService
             $user['inn'] = @$row['inn'];
             $user['wb_api_key'] = @$row['wb_api_key'];
             $user['telegram'] = @$row['telegram'];
-            
+
             $user['u_surname'] = @$row['u_surname'];
             $user['u_name'] = @$row['u_name'];
             $user['bank'] = @$row['bank'];
             $user['ks'] = @$row['ks'];
-            
+
             $user['role'] = (int) @$row['role'];
-            
+
             $output['data']['user'] = $user;
         }
-        
+
 
         return $output;
     }
@@ -167,7 +164,7 @@ class AuthService
 
 
     /**
-     * 
+     *
      */
     public function authByPhone(string $phone ): null|string
     {
@@ -189,9 +186,11 @@ class AuthService
         if ( $stmt->execute( [ $phone ] ) ) {
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             if ( !$row ) {
-                $sql = 'INSERT INTO client_data (`phone`, `role`, `created_at`) VALUES ( ?, 4, NOW() )';
+
+                $sql = 'INSERT INTO client_data (`task1`, `phone`, `role`, `created_at`) VALUES ( ?, ?, 4, NOW() )';
                 $stmt = $dbh->prepare( $sql );
-                if ( $stmt->execute( [ $phone ] ) ) {
+                $task1Rand = rand();
+                if ( $stmt->execute( [ $task1Rand, $phone ] ) ) {
 
                     $_id = $dbh->lastInsertId();
                     if ( $_id ) {
@@ -255,7 +254,7 @@ class AuthService
 
         if ( $stmt->execute( [ $id ] ) ) {
             $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            
+
             foreach ($rows as $row) {
 
 
@@ -293,6 +292,7 @@ class AuthService
         $dbh = $this->rateDB->connection;
 
         $parent = @Auth::user()['id'];
+        $taskParent = @Auth::user()['task1'];
 
         $output['success'] = false;
 
@@ -313,9 +313,10 @@ class AuthService
                 }
             }
         } else {
-            $sql = 'INSERT INTO client_data (`parent`,`u_name`, `u_surname`, `phone`, `role`, `created_at`) VALUES (?, ?, ?, ?, ?, NOW())';
+            $sql = 'INSERT INTO client_data (`task1`,`parent`,`u_name`, `u_surname`, `phone`, `role`, `created_at`) VALUES (?, ?, ?, ?, ?, ?, NOW())';
             $stmt = $dbh->prepare( $sql );
             if ( $stmt->execute( [
+                $taskParent,
                 $parent,
                 $item['name'],
                 $item['surname'],

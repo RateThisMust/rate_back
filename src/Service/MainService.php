@@ -23,13 +23,13 @@ class MainService
     }
 
     /**
-     * Получить список для каруели на главной 
+     * Получить список для каруели на главной
      */
     public function getFastInfo(): array
     {
 
         $dbh = $this->rateDB->connection;
-        
+
         // $client_id = 144;
         $client_id = @Auth::user()['task1'];
         if ( @$client_id ) $client_id = str_replace('#', '', $client_id);
@@ -45,12 +45,12 @@ class MainService
             cl.date_buy LIKE ?
             OR cl.date_buy LIKE ?
             )
-            AND cl.`status` = 'Товар оплачен'
+            AND cl.`status` = '2'
         ";
         $stmt = $dbh->prepare( $sql );
         if ( $stmt->execute( [ $client_id, date('Y-m-d').'%', date('d.m.Y').'%' ] ) ) {
             $value = $stmt->fetchColumn();
-            
+
         }
         if ( !$value ) $value = 0;
         // $_value = '🛒 19 шт. / 6422 ₽';
@@ -73,12 +73,12 @@ class MainService
             cl.date_get LIKE ?
             OR cl.date_get LIKE ?
             )
-            AND cl.`status` IN ('Получен', 'Cогалсовать','Опубликовать', 'Опубликован', 'Модерация')
+            AND cl.`status` IN ('3', 'Cогалсовать','5', '7', '6')
         ";
         $stmt = $dbh->prepare( $sql );
         if ( $stmt->execute( [ $client_id, date('Y-m-d', strtotime("-1 days")).'%', date('d.m.Y', strtotime("-1 days")).'%' ] ) ) {
             $value = $stmt->fetchColumn();
-            
+
         }
         if ( !$value ) $value = 0;
         // $_value = '🚚 49 шт.';
@@ -96,12 +96,12 @@ class MainService
         $sql = "
             SELECT COUNT(*) FROM client cl
             WHERE cl.task1 = ?
-            AND cl.`status` IN ('Опубликовать', 'Опубликован', 'Модерация')
+            AND cl.`status` IN ('5', '7', '6')
         ";
         $stmt = $dbh->prepare( $sql );
         if ( $stmt->execute( [ $client_id ] ) ) {
             $value = $stmt->fetchColumn();
-            
+
         }
         if ( !$value ) $value = 0;
         // $value = '✍️ 29 шт.';
@@ -153,7 +153,7 @@ class MainService
      * @param array $params массив параметров
      * @param int $params[type] тип. 1: Заказали 2: Забрали
      */
-    
+
     public function getStaInfo(array $params = []): array
     {
 
@@ -162,7 +162,7 @@ class MainService
         $type = @$params['type'];
         if ( !$type ) $type = 1;
         if ( !in_array($type, array(1,2)) ) $type = 1;
-        
+
 
         $client_id = @Auth::user()['task1'];
         if ( @$client_id ) $client_id = str_replace('#', '', $client_id);
@@ -181,10 +181,10 @@ class MainService
              new DateInterval('P1D'),
              new DateTime($point_2)
         );
-         
+
         $dates_1 = array();
         foreach ($period_1 as $key => $value) {
-            $dates_1[] = $value->format('Y-m-d');     
+            $dates_1[] = $value->format('Y-m-d');
         }
 
         $period_2 = new DatePeriod(
@@ -192,10 +192,10 @@ class MainService
              new DateInterval('P1D'),
              new DateTime($point_3)
         );
-         
+
         $dates_2 = array();
         foreach ($period_2 as $key => $value) {
-            $dates_2[] = $value->format('Y-m-d');     
+            $dates_2[] = $value->format('Y-m-d');
         }
 
         if ( $type == 1 ) {
@@ -207,19 +207,19 @@ class MainService
                 SELECT DATE(cl.date_buy) `date`, COUNT(*) cnt FROM client cl
                 WHERE cl.task1 = ?
                 AND cl.date_buy IS NOT NULL
-                AND cl.`status` IN ('Товар оплачен', 'Получить', 'Получен','Опубликовать', 'Опубликован', 'Модерация', 'Удалён')
+                AND cl.`status` IN ('2', '3', '4','5', '7', '6', '8')
                 GROUP BY date          
                 HAVING `date` >= ? AND `date` < ?
             ";
         } else if ( $type == 2 ) {
             // Забрали
             // это все то что с статусом Получен, Опубликовать, Модерация, Опубликован, Удалён, за неделю
-            // в недельном разрезе по date get   
+            // в недельном разрезе по date get
             $sql = "
                 SELECT DATE(cl.date_get) `date`, COUNT(*) cnt FROM client cl
                 WHERE 1cl.task1 = ?
                 AND cl.date_get IS NOT NULL
-                AND cl.`status` IN ('Получить', 'Получен','Опубликовать', 'Опубликован', 'Модерация', 'Удалён')
+                AND cl.`status` IN ('3', '4','5', '7', '6', '8')
                 GROUP BY date          
                 HAVING `date` >= ? AND `date` < ?
             ";
@@ -250,13 +250,13 @@ class MainService
             else $current[] = $_rows[ $d ];
         }
 
-        // затычак для тестов 
+        // затычак для тестов
         // $_last = $_current = [];
         // for($i=0;$i<count($last);$i++){$_last[]=rand(5,20);}
         // for($i=0;$i<count($current);$i++){$_current[]=rand(5,20);}
         // $last = $_last;
         // $current = $_current;
-        // 
+        //
 
         return [
             'last' => $last,

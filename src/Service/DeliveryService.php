@@ -29,8 +29,8 @@ class DeliveryService
 
         $statusKeys = [
             'ожидает' => 'Ожидает',
-            'оплачено' => 'Оплачено',
-            'забран' => 'Забран',
+            '2' => 'Оплачено',
+            '4' => 'Забран',
             'no-money' => 'Недостаточно средств',
         ];
 
@@ -43,8 +43,8 @@ class DeliveryService
 
         $statuses = [
             'Ожидает' => 'Ожидает получения|plan',
-            'Оплачено' => 'Ожидает получения|plan',
-            'Забран' => 'Забран|succses',
+            '2' => 'Ожидает получения|plan',
+            '4' => 'Забран|succses',
             'Недостаточно средств' => 'Недостаточно средств|dunger',
         ];
 
@@ -111,7 +111,7 @@ class DeliveryService
                 return ['value' => $v['pvz'], 'text' => $v['pvz']];
             }, $items);
             array_unshift( $pvz_opt, ['value' => '', 'text' => 'Не выбранно']);
-            
+
 
             // $items = [];
             // $items[] = [
@@ -206,7 +206,7 @@ class DeliveryService
 
             }
 
-            
+
         }
 
         return [
@@ -242,7 +242,7 @@ class DeliveryService
 
         $dates = array();
         foreach ($period as $key => $value) {
-            $dates[ crc32($value->format('Y-m-d')) ] = $value->format('Y-m-d');     
+            $dates[ crc32($value->format('Y-m-d')) ] = $value->format('Y-m-d');
         }
 
         if ( !@$dates[ $group ] ) {
@@ -296,9 +296,9 @@ class DeliveryService
                 $cache[$item['art']] = $_item;
             }
             $item['image'] = @$_item['image'];
-            $item['status'] = $this->calcStatus( $item['status'] );    
+            $item['status'] = $this->calcStatus( $item['status'] );
         }
-         
+
 
         $output['headers'] = $headers;
         $output['items'] = $items;

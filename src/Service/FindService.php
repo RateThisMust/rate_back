@@ -55,7 +55,7 @@ class FindService
 
         $dates = array();
         foreach ($period as $key => $value) {
-            $dates[] = $value->format('Y-m-d');     
+            $dates[] = $value->format('Y-m-d');
         }
 
         $days = count($dates);
@@ -66,7 +66,7 @@ class FindService
         foreach ($items as $key => $item) {
             $art = $item['art'];
 
-            $arts[] = $art; 
+            $arts[] = $art;
 
             $_dates = $dates;
             if ( $days <= $item['count'] ) {
@@ -78,7 +78,7 @@ class FindService
             do {
                 foreach ($_dates as $date) {
                     if ( !isset($prepareInfo[ $key.'_'.$art.'_'.$date ]) ) {
-                        $prepareInfo[ $key.'_'.$art.'_'.$date ] = [ 'count' => 0, 'rcount' => 0 ];    
+                        $prepareInfo[ $key.'_'.$art.'_'.$date ] = [ 'count' => 0, 'rcount' => 0 ];
                     }
                     ++$prepareInfo[ $key.'_'.$art.'_'.$date ]['count'];
                     --$count;
@@ -90,7 +90,7 @@ class FindService
             do {
                 foreach ($_dates as $date) {
                     if ( !isset($prepareInfo[ $key.'_'.$art.'_'.$date ]) ) {
-                        $prepareInfo[ $art.'_'.$date ] = [ 'count' => 0, 'rcount' => 0 ];    
+                        $prepareInfo[ $art.'_'.$date ] = [ 'count' => 0, 'rcount' => 0 ];
                     }
                     ++$prepareInfo[ $key.'_'.$art.'_'.$date ]['rcount'];
                     --$rcount;
@@ -113,7 +113,7 @@ class FindService
                     $item['date'] = $date;
                     $results[] = $item;
                 }
-            }   
+            }
         }
 
         $arts = array_unique($arts);
@@ -180,7 +180,7 @@ class FindService
                     }
                 }
             }
-            
+
 
             if ( $res['position'] == 0 ) {
                 $_errors[] = 'Не по всем продуктам удалось определить позицию';
@@ -188,7 +188,7 @@ class FindService
 
             if ( !@$item['barcode'] ) {
                 $_errors[] = 'Не по всем продуктам указан Баркод';
-                
+
             }
 
             if ( count($_errors) > 0 ) {
@@ -197,7 +197,7 @@ class FindService
             }
 
             $results[] = $res;
-            
+
         }
         unset($item);
 
@@ -257,7 +257,7 @@ class FindService
                 ++$page;
             } while ($page <= $maxPage);
         }
-        
+
         return [
             'art' => $art,
             'query' => $query,
@@ -291,7 +291,7 @@ class FindService
                 $res = $this->findByArt( ['art' => $art] );
 
                 if ( @$res['headers'] && !@$output['headers'] ) {
-                    $output['headers'] = $res['headers'];   
+                    $output['headers'] = $res['headers'];
                 }
 
                 if ( @$res['items']  ) {
@@ -312,7 +312,7 @@ class FindService
 
                 if ( file_exists($file.'.csv') ) {
                     $_rows = file($file.'.csv');
-                    $_rows = array_map(function( $v ){ 
+                    $_rows = array_map(function( $v ){
                         return trim($v);
                         $v = trim($v);
                     }, $_rows);
@@ -321,7 +321,7 @@ class FindService
                         return preg_match('#^\d{3}#ui', $v);
                     });
                     $_rows = array_values($_rows);
-                    
+
 
                     foreach ($_rows as $_row) {
                         $_row = explode(";", $_row);
@@ -333,15 +333,15 @@ class FindService
                         $res = $this->findByArt( ['art' => $_row[0]] );
 
                         if ( @$res['headers'] && !@$output['headers'] ) {
-                            $output['headers'] = $res['headers'];   
+                            $output['headers'] = $res['headers'];
                         }
 
                         if ( @$res['items']  ) {
 
                             $item = $res['items'][0];
 
-                            if ( @$_row[1] ) $item['barcode'] = $_row[1];                           
-                            if ( @$_row[3] ) $item['count'] = $_row[3];                           
+                            if ( @$_row[1] ) $item['barcode'] = $_row[1];
+                            if ( @$_row[3] ) $item['count'] = $_row[3];
                             if ( @$_row[4] ) $item['rcount'] = $_row[4];
 
                             if ( @$_row[2] ) {
@@ -354,7 +354,7 @@ class FindService
                                 $output['items'] = array_merge($output['items'], [$item]);
                             }
 
-                            
+
                         }
 
                         if ( @$res['error'] ) {
@@ -400,20 +400,18 @@ class FindService
 
 
         if ( $art ) {
-            $href = 'https://wbx-content-v2.wbstatic.net/ru/'.$art.'.json';
-
+                $href = 'https://wbx-content-v2.wbstatic.net/ru/'.$art.'.json';
             $info = [];
 
-           
-
             $json = file_get_contents($href);
+
             if ( $data = json_decode($json, true) ) {
                 if ( @$data['nm_id'] ) {
-                    $info['art'] = $art; // 
+                    $info['art'] = $art; //
                     $info['name'] = @$data['imt_name']; // Наименование
                     $info['brand'] = @$data['selling']['brand_name']; // Название бренда
-                    $info['brand_id'] = @$data['data']['brand_id']; // 
-                    $info['price'] = ''; // Цена
+                    $info['brand_id'] = @$data['data']['brand_id']; //
+                    $info['price'] = ''; // Цена basicPriceU
                     // $info['name'] = @$data['imt_name']; // Размеры если они есть
                     $info['photo'] = 'https://images.wbstatic.net/c246x328/new/'.floor($art/10000).'0000/'.$art.'-1.jpg'; // Фото товара
                     @$info['size'] = '';
@@ -425,8 +423,8 @@ class FindService
                             $product = @$data['data']['products'][0];
                             if ( @$product['salePriceU'] ) {
                                 $info['price'] = floor($product['salePriceU']/100);
-                            } else if ( @$product['priceU'] ) {
-                                $info['price'] = floor($product['priceU']/100);
+                            } else {
+                                $info['price'] = floor($product['extended']['basicPriceU']/100);
                             }
 
                             $info['sizes'] = [];
@@ -435,7 +433,7 @@ class FindService
                                     $info['sizes'][] = ['value' => '', 'name' => 'Нет', 'text' => 'Нет'];
                                     foreach ($product['sizes'] as $s) {
                                         $info['sizes'][] = ['value' => @$s['origName'], 'name' => @$s['origName'], 'text' => @$s['origName']];
-                                    }                                    
+                                    }
                                 } else if ( count(@$product['sizes']) == 1 ) {
                                     @$info['size'] = @$product['sizes'][0]['origName'];
                                 }
@@ -451,8 +449,9 @@ class FindService
                 ++$errors;
                 $output['msg'] = 'Не нашли по артикулу';
             }
-            
+
             if ( $errors == 0 ) {
+                $dataNow = date('d-m-y');
                 $item = [
                     "image" => @$info['photo'],
                     "brand" => @$info['brand'],
@@ -464,9 +463,11 @@ class FindService
                     "count" => 1,
                     "rcount" => 0,
                     "query" => '',
+                    "naming" => @$info['name'],
                     "position" => -1,
                     "gender" => '',
                     "copy" => '',
+                    "date_add" => $dataNow,
                     "del" => '',
                 ];
 
@@ -502,10 +503,10 @@ class FindService
         $_params['take'] = @$params['take'];
 
         if ( !(@$_params['skip'] && @$_params['skip'] >= 0) ) {
-            $_params['skip'] = 0;            
+            $_params['skip'] = 0;
         }
         if ( !(@$_params['take'] && @$_params['take'] >= 0) ) {
-            $_params['take'] = 10;            
+            $_params['take'] = 10;
         }
         $query = http_build_query($_params);
         $href = 'https://suppliers-api.wildberries.ru/api/v2/stocks?'.$query;
@@ -560,7 +561,7 @@ class FindService
         ];
 
         $items = [];
-        
+
         if ($err) {
           echo "cURL Error #:" . $err;
         } else {
@@ -591,7 +592,7 @@ class FindService
                                             $info['sizes'][] = ['value' => '', 'name' => 'Нет', 'text' => 'Нет'];
                                             foreach ($product['sizes'] as $s) {
                                                 $info['sizes'][] = ['value' => @$s['origName'], 'name' => @$s['origName'], 'text' => @$s['origName']];
-                                            }                                    
+                                            }
                                         } else if ( count(@$product['sizes']) == 1 ) {
                                             @$info['size'] = @$product['sizes'][0]['origName'];
                                         }
@@ -610,7 +611,7 @@ class FindService
                                 "sart" => @$item['article'],
                                 "price" => @$item['price'],
                                 "count" => 1,
-                                "rcount" => 0,
+                                "rcount" => @$item["stock"],
                                 "query" => '',
                                 "position" => -1,
                                 "gender" => '',
